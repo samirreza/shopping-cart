@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Rules\CheckProductsNumberUniqueness;
 
 class StoreOfferRequest extends FormRequest
 {
@@ -24,7 +25,7 @@ class StoreOfferRequest extends FormRequest
     public function rules()
     {
         return [
-            'offers' => 'required|array',
+            'offers' => ['required', 'array', new CheckProductsNumberUniqueness],
             'offers.*.products_number' => 'required|numeric|min:2',
             'offers.*.price' => 'required|numeric',
         ];
