@@ -1,0 +1,49 @@
+version: "3.8"
+services:
+    app:
+        build: ./docker/php
+        container_name: shopping-cart-app
+        restart: unless-stopped
+        working_dir: /var/www/
+        volumes:
+            - ./:/var/www
+            - ./docker/php/custome-php-ini.ini:/usr/local/etc/php/conf.d/custome-php-ini.ini
+            - ./docker/php/custome-php-fpm.conf:/usr/local/etc/php-fpm.d/www2.conf
+        networks:
+            - shopping-cart
+
+    postgres:
+        image: postgres:13-alpine
+        container_name: shopping-cart-postgres
+        restart: unless-stopped
+        volumes:
+            - "shoppingCartDBData:/var/lib/postgresql/data"
+        environment:
+            - POSTGRES_DB=${DB_DATABASE}
+            - POSTGRES_USER=${DB_USERNAME}
+            - POSTGRES_PASSWORD=${DB_PASSWORD}
+        ports:
+            - "5442:5432"
+        networks:
+            - shopping-cart
+
+    nginx:
+        image: nginx:alpine
+        container_name: shopping-cart-nginx
+        restart: unless-stopped
+        working_dir: /var/www/
+        ports:
+            - 8000:80
+        volumes:
+            - ./:/var/www
+            - ./docker/nginx:/etc/nginx/conf.d/
+            - ./storage/logs/nginx:/storage/logs/nginx
+        networks:
+            - shopping-cart
+
+networks:
+    shopping-cart:
+        driver: bridge
+
+volumes:
+    shoppingCartDBData:
