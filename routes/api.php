@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\OfferController;
 use App\Http\Controllers\ProductController;
 
 /*
@@ -16,4 +17,8 @@ use App\Http\Controllers\ProductController;
 
 Route::apiResource('products', ProductController::class)->only([
     'store', 'update', 'show'
+]);
+
+Route::apiResource('products/{product}/offers', OfferController::class)->only([
+    'index', 'store', 'delete'
 ]);
