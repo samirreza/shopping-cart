@@ -5,9 +5,12 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use App\Models\Product;
 use Illuminate\Testing\Fluent\AssertableJson;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class OfferTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_set_product_offers_success()
     {
         $product = Product::create(['name' => 'test product', 'price' => 1000]);
@@ -47,9 +50,7 @@ class OfferTest extends TestCase
             ],
         ]]);
 
-        $response->assertStatus(422)->assertJson(function (AssertableJson $json) {
-            $json->has('errors.offers');
-        });
+        self::assertArrayHasKey('offers', $response['errors']);
     }
 
     public function test_delete_product_deals()

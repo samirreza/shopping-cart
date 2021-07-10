@@ -5,9 +5,12 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use App\Models\Product;
 use Illuminate\Testing\Fluent\AssertableJson;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ProductTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_success_product_creation()
     {
         $response = $this->postJson('/api/products', [
@@ -26,18 +29,14 @@ class ProductTest extends TestCase
     {
         $response = $this->postJson('/api/products', ['price' => 1000]);
 
-        $response->assertStatus(422)->assertJson(function (AssertableJson $json) {
-            $json->has('errors.name');
-        });
+        self::assertArrayHasKey('name', $response['errors']);
     }
 
     public function test_faild_product_creation_for_missing_price()
     {
         $response = $this->postJson('/api/products', ['name' => 'test product']);
 
-        $response->assertStatus(422)->assertJson(function (AssertableJson $json) {
-            $json->has('errors.price');
-        });
+        self::assertArrayHasKey('price', $response['errors']);
     }
 
     public function test_success_product_update()
