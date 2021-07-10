@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OfferController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 
 /*
@@ -22,3 +23,5 @@ Route::apiResource('products', ProductController::class)->only([
 Route::apiResource('products/{product}/offers', OfferController::class)->only([
     'index', 'store', 'delete'
 ]);
+
+Route::post('order', OrderController::class);
