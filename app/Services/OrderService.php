@@ -8,7 +8,8 @@ use App\DTO\OrderItem;
 class OrderService
 {
     public function __construct(
-        private ProductService $productService
+        private ProductService $productService,
+        private OrderPriceCalculatorServiceBasedOnOffers $orderPriceCalculatorServiceBasedOnOffers
     )
     {}
 
@@ -16,6 +17,7 @@ class OrderService
     {
         $orderItems = $this->createOrderItems($productIds);
         $order = new Order($orderItems);
+        $this->orderPriceCalculatorServiceBasedOnOffers->calculate($order);
 
         return $order;
     }
