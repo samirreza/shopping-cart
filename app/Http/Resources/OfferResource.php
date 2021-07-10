@@ -17,7 +17,7 @@ class OfferResource extends JsonResource
     {
         return [
             'product_id' => $this->product_id,
-            'number_of_products' => $this->products_number,
+            'products_number' => $this->products_number,
             'price' => $this->price,
         ];
     }

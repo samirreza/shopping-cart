@@ -40,7 +40,9 @@ class OfferController
         $setProductOffersCommand = new SetProductOffersCommand($product, $offerDTOs);
         $this->offerService->setProductOffers($setProductOffersCommand);
 
-        return OfferResource::collection($product->offers);
+        return OfferResource::collection($product->offers)
+            ->response()
+            ->setStatusCode(Response::HTTP_CREATED);
     }
 
     public function delete(Product $product)

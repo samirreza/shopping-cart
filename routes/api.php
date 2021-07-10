@@ -21,7 +21,8 @@ Route::apiResource('products', ProductController::class)->only([
 ]);
 
 Route::apiResource('products/{product}/offers', OfferController::class)->only([
-    'index', 'store', 'delete'
+    'index', 'store'
 ]);
+Route::delete('products/{product}/offers', [OfferController::class, 'delete']);
 
 Route::post('order', OrderController::class);
