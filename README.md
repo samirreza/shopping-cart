@@ -1,62 +1,269 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+This project is simple shopping cart system that allows you to create products,
+define different offers and apply them on order.
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## API's
 
-## About Laravel
+### Product API's
+You can create product, update it and get its data.
+- `create product` POST /products
+- `update product` PUT /products/{productId}
+- `show product` GET /products/{productId}
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+#### POST /products
+**Parameters**
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+|          Name | Required |  Type   | Description                                                                                                                                                           |
+| -------------:|:--------:|:-------:| --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|     `name` | required | string  | The product name. should be at most 255 characters. |
+|     `price` | required | integer  | The product price. should be a numeric. |
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+**Response**
 
-## Learning Laravel
+*successful creation HTTP 201*
+```json
+{
+    "data": {
+        "id": 1,
+        "name": "test product",
+        "price": 1000
+    }
+}
+```
+*validation errors HTTP 422*
+```json
+{
+    "message": "The given data was invalid.",
+    "errors": {
+        "name": [
+            "The name field is required."
+        ],
+        "price": [
+            "The price field is required."
+        ]
+    }
+}
+ ```
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+#### PUT /products/{productId}
+**Parameters**
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+|          Name | Required |  Type   | Description                                                                                                                                                           |
+| -------------:|:--------:|:-------:| --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|     `name` | required | string  | The product name. should be at most 255 characters. |
+|     `price` | required | integer  | The product price. should be a numeric. |
 
-## Laravel Sponsors
+**Response**
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+*successful update HTTP 200*
+```json
+{
+    "data": {
+        "id": 1,
+        "name": "new name",
+        "price": 2000
+    }
+}
+```
+*validation errors HTTP 422*
+```json
+{
+    "message": "The given data was invalid.",
+    "errors": {
+        "name": [
+            "The name field is required."
+        ],
+        "price": [
+            "The price field is required."
+        ]
+    }
+}
+ ```
+---
+#### Get /products/{productId}
+**Response**
 
-### Premium Partners
+*successful HTTP 200*
+```json
+{
+    "data": {
+        "id": 1,
+        "name": "test product",
+        "price": 1000
+    }
+}
+```
+### Offer API's
+- `set product offers` POST /products/{productId}/offers
+- `show product offers` GET /products/{productId}/offers
+- `delete product offers` DELETE /products/{productId}/offers
+#### POST /products/{productId}/offers
+**Request Body**
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
+```json
+{
+    "offers": [
+        {
+            "products_number": 2,
+            "price": 1800
+        },
+        {
+            "products_number": 3,
+            "price": 2600
+        }
+    ]
+}
+```
 
-## Contributing
+**Response**
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+*successful creation HTTP 201*
+```json
+{
+    "data": [
+        {
+            "product_id": 1,
+            "products_number": 2,
+            "price": 1800
+        },
+        {
+            "product_id": 1,
+            "products_number": 3,
+            "price": 2600
+        }
+    ]
+}
+```
 
-## Code of Conduct
+*validation error HTTP 422*
+```json
+{
+    "message": "The given data was invalid.",
+    "errors": {
+        "offers.0.price": [
+            "The offers.0.price field is required."
+        ],
+        "offers.1.number_of_products": [
+            "The offers.1.products_number is required."
+        ]
+    }
+}
+```
+*error when 2 different offers have same products_number HTTP 422*
+```json
+{
+    "message": "The given data was invalid.",
+    "errors": {
+        "offers": [
+            "The value of products_number must be unique within the given request."
+        ]
+    }
+}
+ ```
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+#### GET /products/{productId}/offers
+**Response**
 
-## Security Vulnerabilities
+*successful HTTP 200*
+```json
+{
+    "data": [
+        {
+            "product_id": 1,
+            "products_number": 2,
+            "price": 1800
+        },
+        {
+            "product_id": 1,
+            "products_number": 3,
+            "price": 2600
+        }
+    ]
+}
+```
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+#### DELETE /products/{productId}/offers
+**Response**
 
-## License
+*successful HTTP 204*
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+### Order API
+
+- `order` POST /order
+---
+
+#### POST /order
+**Request Body**
+
+client sends an array of product Ids.
+
+```json
+{
+    "products": [
+        {
+            "id": 1
+        },
+        {
+            "id": 2
+        },
+        {
+            "id": 3
+        },
+        {
+            "id": 1
+        },
+        {
+            "id": 2
+        },
+        {
+            "id": 3
+        }
+    ]
+}
+```
+
+**Response**
+
+*successful response HTTP 200*
+```json
+{
+    "totalPrice": 200,
+    "discount": 170800,
+    "items": [
+        {
+            "products": {
+                "name": "test",
+                "price": 57000
+            },
+            "count": 3,
+            "totalPrice": 200,
+            "discount": 170800,
+            "appliedOffers": [
+                {
+                    "productsToBuy": 3,
+                    "totalPriceAfterOffer": 200
+                }
+            ]
+        }
+    ]
+}
+```
+
+## Installation
+1. make sure you have `git`, `docker` and `docker-compose`.
+2. clone this repository
+   ```shell
+   git clone git@github.com:samirreza/shopping-cart.git
+   ```
+3. copy `.env.example` file and change variables as suits your environment.
+4. run these commands :
+   ```shell
+   make up
+   make install
+   make db
+   ```
