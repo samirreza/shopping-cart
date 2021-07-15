@@ -18,8 +18,6 @@ class ProductController
         $this->productService = $productService;
     }
 
-    //TODO: write index action
-
     public function store(StoreProductRequest $storeProductRequest)
     {
         $productData = $storeProductRequest->validated();
@@ -44,6 +42,4 @@ class ProductController
     {
         return ProductResource::make($product);
     }
-
-    //TODO: write delete action
 }

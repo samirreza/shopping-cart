@@ -5,24 +5,31 @@ namespace App\Services;
 use App\Models\Product;
 use Illuminate\Support\Collection;
 use App\Commands\StoreProductCommand;
+use App\Repositories\Product\ProductRepositoryInterface;
 
 class ProductService
 {
-    // TODO: use Repository design pattern
+    public function __construct(
+        private ProductRepositoryInterface $productRepository
+    )
+    {}
+
     public function storeProduct(StoreProductCommand $storeProductCommand): Product
     {
         $product = new Product();
         $product->name = $storeProductCommand->getName();
         $product->price = $storeProductCommand->getPrice();
-        $product->save();
+
+        $this->productRepository->save($product);
 
         return $product;
     }
 
-    // TODO: use DTO instead of changedAttributes
     public function updateProduct(Product $product, array $changedAttributes): Product
     {
-        $product->update($changedAttributes);
+        $product->fill($changedAttributes);
+
+        $this->productRepository->save($product);
 
         return $product;
     }

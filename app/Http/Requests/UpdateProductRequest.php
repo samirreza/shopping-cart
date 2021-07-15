@@ -25,7 +25,7 @@ class UpdateProductRequest extends FormRequest
     {
         return [
             'name' => 'sometimes|max:255',
-            'price' => 'sometimes|numeric',
+            'price' => 'sometimes|numeric|gt:0',
         ];
     }
 }
