@@ -39,6 +39,16 @@ class ProductTest extends TestCase
         self::assertArrayHasKey('price', $response['errors']);
     }
 
+    public function test_faild_product_creation_for_negative_price()
+    {
+        $response = $this->postJson('/api/products', [
+            'name' => 'test product',
+            'price' => -1000,
+        ]);
+
+        self::assertArrayHasKey('price', $response['errors']);
+    }
+
     public function test_success_product_update()
     {
         $product = Product::create(['name' => 'old product', 'price' => 1000]);
@@ -51,6 +61,18 @@ class ProductTest extends TestCase
             $json->has('data.id');
             $json->where('data.name', 'new product');
             $json->where('data.price', 2000);
+        });
+    }
+
+    public function test_show_product()
+    {
+        $product = Product::create(['name' => 'test product', 'price' => 1000]);
+        $response = $this->getJson("/api/products/$product->id");
+
+        $response->assertStatus(200)->assertJson(function (AssertableJson $json) {
+            $json->has('data.id');
+            $json->where('data.name', 'test product');
+            $json->where('data.price', 1000);
         });
     }
 }

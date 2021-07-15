@@ -11,14 +11,12 @@ use App\Http\Requests\UpdateProductRequest;
 
 class ProductController
 {
-    private ProductService $productService;
+    public function __construct(
+        private ProductService $productService
+    )
+    {}
 
-    public function __construct(ProductService $productService)
-    {
-        $this->productService = $productService;
-    }
-
-    public function store(StoreProductRequest $storeProductRequest)
+    public function store(StoreProductRequest $storeProductRequest): ProductResource
     {
         $productData = $storeProductRequest->validated();
         $storeProductCommand = new StoreProductCommand(
@@ -30,7 +28,7 @@ class ProductController
         return ProductResource::make($product);
     }
 
-    public function update(Product $product, UpdateProductRequest $updateProductRequest)
+    public function update(Product $product, UpdateProductRequest $updateProductRequest): ProductResource
     {
         $validatedData = $updateProductRequest->validated();
         $product = $this->productService->updateProduct($product, $validatedData);
@@ -38,7 +36,7 @@ class ProductController
         return ProductResource::make($product);
     }
 
-    public function show(Product $product)
+    public function show(Product $product): ProductResource
     {
         return ProductResource::make($product);
     }

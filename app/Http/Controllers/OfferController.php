@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\DTO\OfferDTO;
 use App\Models\Product;
+use Illuminate\Http\Response;
 use App\Services\OfferService;
+use Illuminate\Http\JsonResponse;
 use App\Http\Resources\OfferResource;
 use App\Http\Requests\StoreOfferRequest;
 use App\Commands\SetProductOffersCommand;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class OfferController
 {
@@ -17,7 +19,7 @@ class OfferController
     )
     {}
 
-    public function store(Product $product, StoreOfferRequest $storeOfferRequest)
+    public function store(Product $product, StoreOfferRequest $storeOfferRequest): JsonResponse
     {
         $offersData = $storeOfferRequest->validated();
         $offerDTOs = [];
@@ -36,14 +38,14 @@ class OfferController
             ->setStatusCode(Response::HTTP_CREATED);
     }
 
-    public function index(Product $product)
+    public function index(Product $product): AnonymousResourceCollection
     {
         $offers = $this->offerService->getProductOffers($product);
 
         return OfferResource::collection($offers);
     }
 
-    public function delete(Product $product)
+    public function delete(Product $product): Response
     {
         $this->offerService->deleteProductOffers($product);
 

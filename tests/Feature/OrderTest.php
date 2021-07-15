@@ -14,17 +14,19 @@ class OrderTest extends TestCase
     public function test_order_without_offer()
     {
         $this->insertTestProducts();
-        $response = $this->postJson("/api/order", ['products' => [
+        $response = $this->postJson('/api/order', ['products' => [
             ['id' => 1000],
             ['id' => 1001],
             ['id' => 1002],
         ]]);
 
-        self::assertEquals($response['totalPrice'], 6000);
-        self::assertEmpty($response['items'][0]['appliedOffers']);
+        self::assertEquals($response['data']['totalPrice'], 6000);
+        self::assertEmpty($response['data']['products'][0]['appliedOffers']);
+        self::assertEmpty($response['data']['products'][1]['appliedOffers']);
+        self::assertEmpty($response['data']['products'][2]['appliedOffers']);
     }
 
-    public function test_order_with_offer()
+    public function test_order_with_offers()
     {
         $this->insertTestProducts();
         $product4 = Product::create(['name' => 'product four', 'price' => 500]);
@@ -32,7 +34,7 @@ class OrderTest extends TestCase
         $product5 = Product::create(['name' => 'product five', 'price' => 1000]);
         $product5->offers()->save(Offer::make(['products_number' => 2, 'price' => 1800]));
 
-        $response = $this->postJson("/api/order", ['products' => [
+        $response = $this->postJson('/api/order', ['products' => [
             ['id' => $product4->id],
             ['id' => $product4->id],
             ['id' => 1000],
@@ -44,8 +46,37 @@ class OrderTest extends TestCase
             ['id' => $product4->id],
         ]]);
 
-        self::assertEquals($response['totalPrice'], 10500);
-        self::assertEquals($response['discount'], 500);
+        self::assertEquals($response['data']['totalPrice'], 10500);
+    }
+
+    public function test_order_with_complex_offers()
+    {
+        $product = Product::create(['name' => 'test product', 'price' => 50]);
+        $product->offers()->saveMany([
+            Offer::make(['products_number' => 2, 'price' => 91]),
+            Offer::make(['products_number' => 3, 'price' => 130]),
+        ]);
+
+        $response = $this->postJson('/api/order', ['products' => [
+            ['id' => $product->id],
+            ['id' => $product->id],
+            ['id' => $product->id],
+            ['id' => $product->id],
+        ]]);
+
+        self::assertEquals($response['data']['totalPrice'], 180);
+    }
+
+    public function test_order_validation_error()
+    {
+        $this->insertTestProducts();
+        $response = $this->postJson('/api/order', ['products' => [
+            ['id' => 1000],
+            ['id' => 1001],
+            ['id' => 2000],
+        ]]);
+
+        self::assertArrayHasKey('products.2.id', $response['errors']);
     }
 
     private function insertTestProducts()

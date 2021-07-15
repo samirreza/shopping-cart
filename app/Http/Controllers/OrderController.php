@@ -15,7 +15,7 @@ class OrderController
     )
     {}
 
-    public function __invoke()
+    public function __invoke(): OrderResource
     {
         $orderData = $this->orderRequest->validated();
         $orderedProductIds = Arr::pluck($orderData['products'], 'id');
