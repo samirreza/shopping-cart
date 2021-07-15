@@ -21,10 +21,10 @@ class OfferService
         $this->offerRepository->deleteProductOffers($product);
         $offers = [];
         foreach ($setProductOffersCommand->getOfferDTOs() as $offerDTO) {
-            $offer = new Offer();
-            $offer->products_number = $offerDTO->getProductsNumber();
-            $offer->price = $offerDTO->getPrice();
-            $offers[] = $offer;
+            $offers[] = Offer::createFromRaw(
+                $offerDTO->getProductsNumber(),
+                $offerDTO->getPrice()
+            );
         }
 
         $this->offerRepository->saveProductOffers($product, $offers);

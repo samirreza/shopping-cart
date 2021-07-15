@@ -17,4 +17,13 @@ class Offer extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    public static function createFromRaw(int $productsNumber, int $price): self
+    {
+        $offer = new self();
+        $offer->products_number = $productsNumber;
+        $offer->price = $price;
+
+        return $offer;
+    }
 }

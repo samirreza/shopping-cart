@@ -15,4 +15,13 @@ class Product extends Model
     {
         return $this->hasMany(Offer::class);
     }
+
+    public static function createFromRaw(string $name, int $price): self
+    {
+        $product = new self();
+        $product->name = $name;
+        $product->price = $price;
+
+        return $product;
+    }
 }

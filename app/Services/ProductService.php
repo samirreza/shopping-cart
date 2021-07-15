@@ -16,9 +16,10 @@ class ProductService
 
     public function storeProduct(StoreProductCommand $storeProductCommand): Product
     {
-        $product = new Product();
-        $product->name = $storeProductCommand->getName();
-        $product->price = $storeProductCommand->getPrice();
+        $product = Product::createFromRaw(
+            $storeProductCommand->getName(),
+            $storeProductCommand->getPrice()
+        );
 
         $this->productRepository->save($product);
 
