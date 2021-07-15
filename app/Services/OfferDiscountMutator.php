@@ -79,13 +79,12 @@ class OfferDiscountMutator implements DiscountMutatorInterface
                 $offers,
                 $orderItem->getProductPrice()
             );
-            $partitionAppliedOffers = $this->getPartitionAppliedOffers(
-                $partition,
-                $offers
-            );
             if ($partitionPrice < $minPrice) {
                 $minPrice = $partitionPrice;
-                $bestAppliedOffers = $partitionAppliedOffers;
+                $bestAppliedOffers = $this->getPartitionAppliedOffers(
+                    $partition,
+                    $offers
+                );
             }
         }
 

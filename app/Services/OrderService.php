@@ -16,9 +16,9 @@ class OrderService
 
     public function order(array $orderedProductIds): Order
     {
-        $order = new Order();
-        $this->addOrderItemsToOrder($order, $orderedProductIds);
+        $order = $this->createOrder($orderedProductIds);
         $this->discountMutatorManager->mutate($order);
+        $order->setTotalPrice($this->getTotalPrice($order));
 
         return $order;
     }
@@ -38,19 +38,20 @@ class OrderService
         return ($orderItem->getProductPrice() * $orderItem->getProductCount()) - $orderItem->getDiscount();
     }
 
-    private function addOrderItemsToOrder(Order $order, array $orderedProductIds): void
+    private function createOrder(array $orderedProductIds): Order
     {
         $orderedProducts = $this->productRepository->getByIds($orderedProductIds);
         $productCountPerId = array_count_values($orderedProductIds);
+        $orderItems = [];
         foreach ($orderedProducts as $orderedProduct) {
-            $order->addOrderItem(
-                new OrderItem(
-                    $orderedProduct->id,
-                    $orderedProduct->name,
-                    $orderedProduct->price,
-                    $productCountPerId[$orderedProduct->id]
-                )
+            $orderItems[] = new OrderItem(
+                $orderedProduct->id,
+                $orderedProduct->name,
+                $orderedProduct->price,
+                $productCountPerId[$orderedProduct->id]
             );
         }
+
+        return new Order($orderItems);
     }
 }

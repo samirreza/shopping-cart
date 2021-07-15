@@ -15,7 +15,7 @@ class AppliedOffer
         return $this->productsNumber;
     }
 
-    public function getPriceAfterOffer(): ?int
+    public function getPriceAfterOffer(): int
     {
         return $this->priceAfterOffer;
     }
