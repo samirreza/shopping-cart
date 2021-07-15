@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Product;
-use Illuminate\Support\Collection;
 use App\Commands\StoreProductCommand;
 use App\Repositories\Product\ProductRepositoryInterface;
 
@@ -33,11 +32,5 @@ class ProductService
         $this->productRepository->save($product);
 
         return $product;
-    }
-
-    // TODO: use Repository design pattern
-    public function getProductsByIds(array $ids): Collection
-    {
-        return Product::whereIn('id', $ids)->get()->keyBy('id');
     }
 }

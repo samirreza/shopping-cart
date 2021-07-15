@@ -4,45 +4,53 @@ namespace App\Services;
 
 use App\DTO\Order;
 use App\DTO\OrderItem;
+use App\Repositories\Product\ProductRepositoryInterface;
 
 class OrderService
 {
     public function __construct(
-        private ProductService $productService,
-        private OrderPriceCalculatorServiceBasedOnOffers $orderPriceCalculatorServiceBasedOnOffers
+        private ProductRepositoryInterface $productRepository,
+        private DiscountMutatorManager $discountMutatorManager
     )
     {}
 
-    public function order(array $productIds): Order
+    public function order(array $orderedProductIds): Order
     {
-        $orderItems = $this->createOrderItems($productIds);
-        $order = new Order($orderItems);
-        $this->orderPriceCalculatorServiceBasedOnOffers->calculate($order);
+        $order = new Order();
+        $this->addOrderItemsToOrder($order, $orderedProductIds);
+        $this->discountMutatorManager->mutate($order);
 
         return $order;
     }
 
-    private function createOrderItems(array $productIds)
+    public function getTotalPrice(Order $order): int
     {
-        $mapping = [];
-        foreach ($productIds as $productId) {
-            if (isset($mapping[$productId])) {
-                $mapping[$productId] = $mapping[$productId] + 1;
-            } else {
-                $mapping[$productId] = 1;
-            }
+        $totalPrice = 0;
+        foreach ($order->getOrderItems() as $orderItem) {
+            $totalPrice += $this->getOrderItemTotalPrice($orderItem);
         }
 
-        $products = $this->productService->getProductsByIds($productIds);
+        return $totalPrice;
+    }
 
-        $orderItems = [];
-        foreach ($mapping as $productId => $count) {
-            $orderItems[] = new OrderItem(
-                $products[$productId],
-                $count
+    public function getOrderItemTotalPrice(OrderItem $orderItem): int
+    {
+        return ($orderItem->getProductPrice() * $orderItem->getProductCount()) - $orderItem->getDiscount();
+    }
+
+    private function addOrderItemsToOrder(Order $order, array $orderedProductIds): void
+    {
+        $orderedProducts = $this->productRepository->getByIds($orderedProductIds);
+        $productCountPerId = array_count_values($orderedProductIds);
+        foreach ($orderedProducts as $orderedProduct) {
+            $order->addOrderItem(
+                new OrderItem(
+                    $orderedProduct->id,
+                    $orderedProduct->name,
+                    $orderedProduct->price,
+                    $productCountPerId[$orderedProduct->id]
+                )
             );
         }
-
-        return $orderItems;
     }
 }

@@ -6,7 +6,7 @@ class AppliedOffer
 {
     public function __construct(
         private int $productsNumber,
-        private int $totalPriceAfterOffer,
+        private int $priceAfterOffer,
     )
     {}
 
@@ -15,8 +15,8 @@ class AppliedOffer
         return $this->productsNumber;
     }
 
-    public function getTotalPriceAfterOffer(): ?int
+    public function getPriceAfterOffer(): ?int
     {
-        return $this->totalPriceAfterOffer;
+        return $this->priceAfterOffer;
     }
 }

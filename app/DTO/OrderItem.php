@@ -2,28 +2,49 @@
 
 namespace App\DTO;
 
-use App\Models\Product;
-
 class OrderItem
 {
-    private ?int $totalPrice = null;
-    private array $appliedOffers = [];
     private int $discount = 0;
+    private array $appliedOffers = [];
 
     public function __construct(
-        private Product $product,
-        private int $count
+        private int $productId,
+        private string $productName,
+        private int $productPrice,
+        private int $productCount
     )
     {}
 
-    public function getProduct(): Product
+    public function getProductId(): int
     {
-        return $this->product;
+        return $this->productId;
     }
 
-    public function getCount(): int
+    public function getProductName(): string
     {
-        return $this->count;
+        return $this->productName;
+    }
+
+    public function getProductPrice(): int
+    {
+        return $this->productPrice;
+    }
+
+    public function getProductCount(): int
+    {
+        return $this->productCount;
+    }
+
+    public function addDiscount(int $discount): self
+    {
+        $this->discount += $discount;
+
+        return $this;
+    }
+
+    public function getDiscount(): int
+    {
+        return $this->discount;
     }
 
     public function setAppliedOffers(array $appliedOffers): self
@@ -36,29 +57,5 @@ class OrderItem
     public function getAppliedOffers(): array
     {
         return $this->appliedOffers;
-    }
-
-    public function setTotalPrice(int $totalPrice): self
-    {
-        $this->totalPrice = $totalPrice;
-
-        return $this;
-    }
-
-    public function getTotalPrice(): ?int
-    {
-        return $this->totalPrice;
-    }
-
-    public function setDiscount(int $discount): self
-    {
-        $this->discount = $discount;
-
-        return $this;
-    }
-
-    public function getDiscount(): int
-    {
-        return $this->discount;
     }
 }

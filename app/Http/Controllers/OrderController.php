@@ -19,9 +19,8 @@ class OrderController
     public function __invoke()
     {
         $orderData = $this->orderRequest->validated();
-        $productIds = Arr::pluck($orderData['products'], 'id');
-        $order = $this->orderService->order($productIds);
-
-        return response()->json($this->orderFormatter->format($order));
+        $orderedProductIds = Arr::pluck($orderData['products'], 'id');
+        $order = $this->orderService->order($orderedProductIds);
+        dd($order, $this->orderService->getTotalPrice($order));
     }
 }

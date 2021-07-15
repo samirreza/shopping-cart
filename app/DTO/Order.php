@@ -4,40 +4,15 @@ namespace App\DTO;
 
 class Order
 {
-    private ?int $totalPrice = null;
-    private int $discount = 0;
+    private array $orderItems = [];
 
-    public function __construct(
-        private array $orderItems
-    )
-    {}
+    public function addOrderItem(OrderItem $orderItem): void
+    {
+        $this->orderItems[] = $orderItem;
+    }
 
-    public function getOrderItems()
+    public function getOrderItems(): array
     {
         return $this->orderItems;
-    }
-
-    public function addTotalPrice(int $totalPrice): self
-    {
-        $this->totalPrice += $totalPrice;
-
-        return $this;
-    }
-
-    public function getTotalPrice(): ?int
-    {
-        return $this->totalPrice;
-    }
-
-    public function addDiscount(int $discount): self
-    {
-        $this->discount += $discount;
-
-        return $this;
-    }
-
-    public function getDiscount(): int
-    {
-        return $this->discount;
     }
 }
