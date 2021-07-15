@@ -2,7 +2,7 @@
 
 namespace App\DTO;
 
-class Offer
+class OfferDTO
 {
     public function __construct(
         private int $productsNumber,

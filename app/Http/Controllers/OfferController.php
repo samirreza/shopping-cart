@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\DTO\OfferDTO;
 use App\Models\Product;
-use App\DTO\Offer as OfferDTO;
 use App\Services\OfferService;
 use App\Http\Resources\OfferResource;
 use App\Http\Requests\StoreOfferRequest;
@@ -12,19 +12,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class OfferController
 {
-    private OfferService $offerService;
-
-    public function __construct(OfferService $offerService)
-    {
-        $this->offerService = $offerService;
-    }
-
-    public function index(Product $product)
-    {
-        $offers = $this->offerService->getProductOffers($product);
-
-        return OfferResource::collection($offers);
-    }
+    public function __construct(
+        private OfferService $offerService
+    )
+    {}
 
     public function store(Product $product, StoreOfferRequest $storeOfferRequest)
     {
@@ -38,16 +29,23 @@ class OfferController
         }
 
         $setProductOffersCommand = new SetProductOffersCommand($product, $offerDTOs);
-        $this->offerService->setProductOffers($setProductOffersCommand);
+        $offers = $this->offerService->setProductOffers($setProductOffersCommand);
 
-        return OfferResource::collection($product->offers)
+        return OfferResource::collection($offers)
             ->response()
             ->setStatusCode(Response::HTTP_CREATED);
     }
 
+    public function index(Product $product)
+    {
+        $offers = $this->offerService->getProductOffers($product);
+
+        return OfferResource::collection($offers);
+    }
+
     public function delete(Product $product)
     {
-        $this->offerService->deleteAllProductOffers($product);
+        $this->offerService->deleteProductOffers($product);
 
         return response()->noContent()->setStatusCode(Response::HTTP_NO_CONTENT);
     }

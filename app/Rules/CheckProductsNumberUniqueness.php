@@ -34,6 +34,6 @@ class CheckProductsNumberUniqueness implements Rule
      */
     public function message()
     {
-        return 'The value of products_number must be unique within the given request.';
+        return 'The values of products_number must be unique within the given request.';
     }
 }
