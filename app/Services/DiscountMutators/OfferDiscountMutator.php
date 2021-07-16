@@ -1,22 +1,24 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\DiscountMutators;
 
 use App\DTO\Order;
-use App\Models\Offer;
 use App\DTO\OrderItem;
 use App\DTO\AppliedOffer;
+use App\Queries\OffersForOrderQueryInterface;
+use App\Services\PartitionIntegerServiceInterface;
 
 class OfferDiscountMutator implements DiscountMutatorInterface
 {
     public function __construct(
-        private PartitionIntegerServiceInterface $partitionIntegerService
+        private PartitionIntegerServiceInterface $partitionIntegerService,
+        private OffersForOrderQueryInterface $offersForOrderQuery
     )
     {}
 
     public function mutate(Order $order): void
     {
-        $offers = $this->getOffersForOrderIndexedByProductId($order);
+        $offers = $this->offersForOrderQuery->execute($order);
         foreach ($order->getOrderItems() as $orderItem) {
             if (isset($offers[$orderItem->getProductId()])) {
                 $validPartitions = $this->getValidPartitionsOfProductCount(
@@ -32,25 +34,6 @@ class OfferDiscountMutator implements DiscountMutatorInterface
                 }
             }
         }
-    }
-
-    private function getOffersForOrderIndexedByProductId(Order $order): array
-    {
-        $query = Offer::query();
-        foreach ($order->getOrderItems() as $orderItem) {
-            $query->orWhere(function ($query) use ($orderItem) {
-                $query
-                    ->where('product_id', $orderItem->getProductId())
-                    ->where('products_number', '<=', $orderItem->getProductCount());
-            });
-        }
-
-        $offers = [];
-        foreach ($query->get() as $offer) {
-            $offers[$offer->product_id][$offer->products_number] = $offer;
-        }
-
-        return $offers;
     }
 
     private function getValidPartitionsOfProductCount(int $productCount, array $offers): array

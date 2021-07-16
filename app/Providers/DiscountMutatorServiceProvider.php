@@ -2,9 +2,9 @@
 
 namespace App\Providers;
 
-use App\Services\OfferDiscountMutator;
 use Illuminate\Support\ServiceProvider;
-use App\Services\DiscountMutatorManager;
+use App\Services\DiscountMutators\OfferDiscountMutator;
+use App\Services\DiscountMutators\DiscountMutatorManager;
 
 class DiscountMutatorServiceProvider extends ServiceProvider
 {

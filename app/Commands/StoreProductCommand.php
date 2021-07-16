@@ -19,4 +19,12 @@ class StoreProductCommand
     {
         return $this->price;
     }
+
+    public function toArray(): array
+    {
+        return [
+            'name' => $this->name,
+            'price' => $this->price,
+        ];
+    }
 }

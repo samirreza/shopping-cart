@@ -176,7 +176,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\RepositoryServiceProvider::class,
         App\Providers\DiscountMutatorServiceProvider::class,
-
+        App\Providers\QueryServiceProvider::class,
     ],
 
     /*

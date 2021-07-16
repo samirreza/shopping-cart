@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-class SimplePartitionIntegerService implements PartitionIntegerServiceInterface
+class RecursivePartitionIntegerService implements PartitionIntegerServiceInterface
 {
     public function getPartitions(int $integer): array
     {

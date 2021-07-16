@@ -3,8 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use App\Services\SimplePartitionIntegerService;
 use App\Services\PartitionIntegerServiceInterface;
+use App\Services\RecursivePartitionIntegerService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -15,7 +15,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(PartitionIntegerServiceInterface::class, SimplePartitionIntegerService::class);
+        $this->app->bind(PartitionIntegerServiceInterface::class, RecursivePartitionIntegerService::class);
     }
 
     /**
